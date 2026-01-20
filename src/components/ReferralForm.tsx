@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import emailjs from '@emailjs/browser'
 import './ReferralForm.css'
 
 interface ReferralFormProps {
@@ -47,36 +48,55 @@ const ReferralForm = ({ onSubmit }: ReferralFormProps) => {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     if (!validateForm()) {
       return
     }
 
-    // Submit form data to parent component first
-    onSubmit({
-      email,
-      fullName,
-      businessOwnerName,
-      companyName,
-    })
+    try {
+      // EmailJS configuration - replace these with your credentials
+      const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID || 'service_83hq0el'
+      const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'template_bqn394o'
+      const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || '8FEJnnbeR9l93wSu4'
 
-    // Create email content
-    const subject = encodeURIComponent('Ny referanse fra ' + fullName)
-    const body = encodeURIComponent(
-      `Hei,\n\nJeg vil gjerne referere en kunde:\n\n` +
-      `Mitt navn: ${fullName}\n` +
-      `Min e-post: ${email}\n` +
-      `Bedriftseiers navn: ${businessOwnerName}\n` +
-      `Bedriftens navn: ${companyName}\n\n` +
-      `Med vennlig hilsen,\n${fullName}`
-    )
+      // Initialize EmailJS
+      emailjs.init(EMAILJS_PUBLIC_KEY)
 
-    // Send email via mailto (open in new window/tab if possible)
-    setTimeout(() => {
-      window.location.href = `mailto:damian@asoldi.com?subject=${subject}&body=${body}`
-    }, 100)
+      // Send email using EmailJS
+      const templateParams = {
+        to_email: 'daracha777@gmail.com',
+        from_name: fullName,
+        from_email: email,
+        business_owner_name: businessOwnerName,
+        company_name: companyName,
+        subject: `Ny referanse fra ${fullName}`,
+        message: `Hei,\n\nJeg vil gjerne referere en kunde:\n\n` +
+          `Mitt navn: ${fullName}\n` +
+          `Min e-post: ${email}\n` +
+          `Bedriftseiers navn: ${businessOwnerName}\n` +
+          `Bedriftens navn: ${companyName}\n\n` +
+          `Med vennlig hilsen,\n${fullName}`
+      }
+
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        templateParams
+      )
+
+      // Submit form data to parent component after successful email send
+      onSubmit({
+        email,
+        fullName,
+        businessOwnerName,
+        companyName,
+      })
+    } catch (error) {
+      console.error('Email sending failed:', error)
+      alert('Kunne ikke sende e-post. Vennligst prøv igjen eller sjekk EmailJS konfigurasjon.')
+    }
   }
 
   return (
