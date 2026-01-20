@@ -22,7 +22,7 @@ const StepsProcess = ({ currentStep }: StepsProcessProps) => {
       number: 3,
       title: 'Kunden betaler',
       description:
-        'Vi spør hvem som refererte kunden og du blir betalt innen 1. av hver måned',
+        'tjen penger når de kjøper et produkt fra oss',
     },
     {
       number: 4,

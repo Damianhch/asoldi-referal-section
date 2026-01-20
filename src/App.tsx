@@ -28,12 +28,17 @@ function App() {
     <div className="app-container">
       <div className="main-content">
         <div className="left-column">
-          <div className="form-section">
-            {!formSubmitted ? (
-              <ReferralForm onSubmit={handleFormSubmit} />
-            ) : (
-              <PostSubmissionOptions formData={formData!} />
-            )}
+          <div className="form-section-wrapper">
+            <div className="orange-banner">
+              Perfekt for de med et stort nettverk
+            </div>
+            <div className="form-section">
+              {!formSubmitted ? (
+                <ReferralForm onSubmit={handleFormSubmit} />
+              ) : (
+                <PostSubmissionOptions formData={formData!} />
+              )}
+            </div>
           </div>
           <ReferralPayouts />
         </div>
